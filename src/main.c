@@ -2,8 +2,53 @@
 #include "raylib.h"
 #include "resource_dir.h"	
 
+struct GameObject {
+	unsigned char x;
+	unsigned char y;
+	Texture sprite;
+
+};
+
+struct GameObject player;
+
+
+void draw_screen(void) {
+
+
+			// Setup the back buffer for drawing (clear color and depth buffers)
+			ClearBackground(BLACK);
+	
+			// draw some text using the default font
+			DrawText("Raylib Demo", 0, 0, 42, RED);
+	
+			// draw our player on the screen
+			DrawTexture(player.sprite, player.x, player.y, WHITE);
+			
+
+}
+
+void get_input(void) {
+
+	if (IsKeyDown(KEY_UP)) player.y -= 16 * GetFrameTime();
+	if (IsKeyDown(KEY_DOWN)) player.y += 16 * GetFrameTime();
+	if (IsKeyDown(KEY_LEFT)) player.x -= 16 * GetFrameTime();
+	if (IsKeyDown(KEY_RIGHT)) player.x += 16 * GetFrameTime();
+
+}
+
+void move_sprites(void) {
+
+}
+
 int main ()
 {
+
+	player.x=100;
+	player.y=100;
+
+	// Set to 60 frames-per-second
+	SetTargetFPS(60);               
+
 	// Tell the window to use vsync and work on high DPI displays
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
 
@@ -15,30 +60,26 @@ int main ()
 	SearchAndSetResourceDir("resources");
 
 	// Load a sprite graphic from the resources directory
-	Texture player = LoadTexture("sprite.png");
+	player.sprite = LoadTexture("sprite.png");
 	
-	// game loop
-	while (!WindowShouldClose())		// run the loop untill the user presses ESCAPE or presses the Close button on the window
-	{
-		// drawing
+	// run until ESCAPE or the window is closed
+	while (!WindowShouldClose()) {
+
+		// Start the frame
 		BeginDrawing();
 
-		// Setup the back buffer for drawing (clear color and depth buffers)
-		ClearBackground(BLACK);
+		// Game logic
+		get_input();
+		move_sprites();
+		draw_screen();
 
-		// draw some text using the default font
-		DrawText("Raylib Demo", 200,200,20,WHITE);
-
-		// draw our texture to the screen
-		DrawTexture(player, 400, 200, WHITE);
-		
-		// end the frame and get ready for the next one  (display frame, poll input, etc...)
+		// end the frame
 		EndDrawing();
 	}
 
 	// cleanup
 	// unload our texture so it can be cleaned up
-	UnloadTexture(player);
+	UnloadTexture(player.sprite);
 
 	// destroy the window and cleanup the OpenGL context
 	CloseWindow();
