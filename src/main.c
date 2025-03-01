@@ -2,14 +2,30 @@
 #include "raylib.h"
 #include "resource_dir.h"	
 
+Texture wall;
+
 struct GameObject {
-	unsigned char x;
-	unsigned char y;
+	float x;
+	float y;
 	Texture sprite;
 
 };
 
 struct GameObject player;
+
+int screenWidth = 800;
+int screenHeight = 600;
+
+char map[8][8] = {
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 0, 0, 0, 0, 0, 0, 1},
+    {1, 0, 0, 0, 0, 1, 1, 1},
+    {1, 1, 1, 1, 0, 1, 0, 1},
+    {1, 0, 0, 0, 0, 0, 0, 1},
+    {1, 0, 0, 0, 0, 1, 0, 1},
+    {1, 0, 0, 0, 0, 1, 0, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1}
+};
 
 
 void draw_screen(void) {
@@ -17,9 +33,20 @@ void draw_screen(void) {
 
 			// Setup the back buffer for drawing (clear color and depth buffers)
 			ClearBackground(BLACK);
+
+			for (int y = 0; y < 8; y++) {
+				for (int x = 0; x < 8; x++) {
+					if (map[y][x] == 1)
+						DrawTexture(wall, (x*64)+100, (y*64)+100, WHITE);
+				}
+			}
+			
 	
+			char buffer[40];
+			sprintf(buffer, "Key: %d", GetKeyPressed());
+
 			// draw some text using the default font
-			DrawText("Raylib Demo", 0, 0, 42, RED);
+			DrawText(buffer, 0, 0, 42, RED);
 	
 			// draw our player on the screen
 			DrawTexture(player.sprite, player.x, player.y, WHITE);
@@ -29,10 +56,10 @@ void draw_screen(void) {
 
 void get_input(void) {
 
-	if (IsKeyDown(KEY_UP)) player.y -= 16 * GetFrameTime();
-	if (IsKeyDown(KEY_DOWN)) player.y += 16 * GetFrameTime();
-	if (IsKeyDown(KEY_LEFT)) player.x -= 16 * GetFrameTime();
-	if (IsKeyDown(KEY_RIGHT)) player.x += 16 * GetFrameTime();
+	if (IsKeyDown(KEY_W)) player.y -= 64 * GetFrameTime();
+	if (IsKeyDown(KEY_S)) player.y += 64 * GetFrameTime();
+	if (IsKeyDown(KEY_A)) player.x -= 64 * GetFrameTime();
+	if (IsKeyDown(KEY_D)) player.x += 64 * GetFrameTime();
 
 }
 
@@ -43,8 +70,9 @@ void move_sprites(void) {
 int main ()
 {
 
-	player.x=100;
-	player.y=100;
+
+	player.x=(screenWidth/2)-32;
+	player.y=(screenHeight/2)-32;
 
 	// Set to 60 frames-per-second
 	SetTargetFPS(60);               
@@ -53,7 +81,7 @@ int main ()
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
 
 	// Create the window and OpenGL context
-	InitWindow(800, 600, "Raylib Demo");
+	InitWindow(screenWidth, screenHeight, "Raylib Demo");
 
 	// Utility function from resource_dir.h to find the resources folder 
 	// and set it as the current working directory so we can load from it
@@ -61,6 +89,8 @@ int main ()
 
 	// Load a sprite graphic from the resources directory
 	player.sprite = LoadTexture("sprite.png");
+	wall = LoadTexture("brick.png");
+
 	
 	// run until ESCAPE or the window is closed
 	while (!WindowShouldClose()) {
