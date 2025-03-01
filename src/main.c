@@ -38,7 +38,7 @@ int main ()
 
 	// cleanup
 	// unload our texture so it can be cleaned up
-	UnloadTexture(wabbit);
+	UnloadTexture(player);
 
 	// destroy the window and cleanup the OpenGL context
 	CloseWindow();
