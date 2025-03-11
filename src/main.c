@@ -1,117 +1,98 @@
 // Raylib and SearchAndSetResourceDir
 #include "raylib.h"
-#include "resource_dir.h"	
+#include "display/raylib_display.h"
+#include "include/globals.h"
+#include "include/maze.h"
+#include "input/input.h"
+#include "logic/game_logic.h"
+#include "screens/screens.h"
+#include "resource_dir.h"
+#include <limits.h>
 
-Texture wall;
-
-struct GameObject {
-	float x;
-	float y;
-	Texture sprite;
-
-};
-
-struct GameObject player;
-
-int screenWidth = 800;
-int screenHeight = 600;
-
-char map[8][8] = {
-    {1, 1, 1, 1, 1, 1, 1, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 1, 1, 1},
-    {1, 1, 1, 1, 0, 1, 0, 1},
-    {1, 0, 0, 0, 0, 0, 0, 1},
-    {1, 0, 0, 0, 0, 1, 0, 1},
-    {1, 0, 0, 0, 0, 1, 0, 1},
-    {1, 1, 1, 1, 1, 1, 1, 1}
-};
-
-
-void draw_screen(void) {
-
-
-			// Setup the back buffer for drawing (clear color and depth buffers)
-			ClearBackground(BLACK);
-
-			for (int y = 0; y < 8; y++) {
-				for (int x = 0; x < 8; x++) {
-					if (map[y][x] == 1)
-						DrawTexture(wall, (x*64)+100, (y*64)+100, WHITE);
-				}
-			}
-			
-	
-			char buffer[40];
-			sprintf(buffer, "Key: %d", GetKeyPressed());
-
-			// draw some text using the default font
-			DrawText(buffer, 0, 0, 42, RED);
-	
-			// draw our player on the screen
-			DrawTexture(player.sprite, player.x, player.y, WHITE);
-			
-
-}
 
 void get_input(void) {
 
-	if (IsKeyDown(KEY_W)) player.y -= 64 * GetFrameTime();
-	if (IsKeyDown(KEY_S)) player.y += 64 * GetFrameTime();
-	if (IsKeyDown(KEY_A)) player.x -= 64 * GetFrameTime();
-	if (IsKeyDown(KEY_D)) player.x += 64 * GetFrameTime();
+	int x,y;
+
+	if (IsKeyDown(KEY_W)) y -= 64 * GetFrameTime();
+	if (IsKeyDown(KEY_S)) y += 64 * GetFrameTime();
+	if (IsKeyDown(KEY_A)) x -= 64 * GetFrameTime();
+	if (IsKeyDown(KEY_D)) x += 64 * GetFrameTime();
 
 }
 
-void move_sprites(void) {
 
-}
 
-int main ()
+void resources(void)
 {
 
+	// Find the resources directory
+	if (!SearchAndSetResourceDir("resources")) {
+		printf("Failed to find resources directory. Please make sure the resources folder is in the same directory as the executable.\n");
+		CloseWindow();
 
-	player.x=(screenWidth/2)-32;
-	player.y=(screenHeight/2)-32;
-
-	// Set to 60 frames-per-second
-	SetTargetFPS(60);               
-
-	// Tell the window to use vsync and work on high DPI displays
-	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
-
-	// Create the window and OpenGL context
-	InitWindow(screenWidth, screenHeight, "Raylib Demo");
-
-	// Utility function from resource_dir.h to find the resources folder 
-	// and set it as the current working directory so we can load from it
-	SearchAndSetResourceDir("resources");
-
-	// Load a sprite graphic from the resources directory
-	player.sprite = LoadTexture("sprite.png");
-	wall = LoadTexture("brick.png");
-
-	
-	// run until ESCAPE or the window is closed
-	while (!WindowShouldClose()) {
-
-		// Start the frame
-		BeginDrawing();
-
-		// Game logic
-		get_input();
-		move_sprites();
-		draw_screen();
-
-		// end the frame
-		EndDrawing();
 	}
 
-	// cleanup
-	// unload our texture so it can be cleaned up
-	UnloadTexture(player.sprite);
+	// Load resources with error checking
+	char resourcePath[PATH_MAX];
+	
+	GetResourcePath("sprite.png", resourcePath, sizeof(resourcePath));
+	Texture2D sprite = LoadTexture(resourcePath);
+	if (sprite.id == 0) {
+		printf("Failed to load sprite.png\n");
+		CloseWindow();
 
-	// destroy the window and cleanup the OpenGL context
-	CloseWindow();
-	return 0;
+	}
+
+	GetResourcePath("brick.png", resourcePath, sizeof(resourcePath));
+	Texture2D wall = LoadTexture(resourcePath);
+	if (wall.id == 0) {
+		printf("Failed to load brick.png\n");
+		UnloadTexture(sprite);
+		CloseWindow();
+
+	}
+
+
 }
+
+
+int main(void) {
+    // Initialize Raylib display
+    init_raylib_display();
+    
+    bool should_continue = true;
+    
+    while (should_continue && !window_should_close()) {
+        // Show title screen first
+        title_screen();
+        
+        // Initialize game state
+        init_game();
+        
+        // Main game loop
+        while (in_play && !window_should_close()) {
+            // Update game state
+            update_game();
+            
+            // Clear screen and begin drawing
+            clear_screen();
+            BeginDrawing();
+            
+            // Draw game state
+            draw_game();
+            
+            // End drawing
+            EndDrawing();
+        }
+        
+        // If we're not in play but haven't closed the window, show game over
+        if (!window_should_close()) {
+            should_continue = game_over();
+        }
+    }
+    
+    // Cleanup
+    close_raylib_display();
+    return 0;
+} 
