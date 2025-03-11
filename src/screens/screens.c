@@ -22,44 +22,43 @@ unsigned char logo[] = {
 };
 
 void center_text(unsigned char row, char *text) {
-    sprintf(output, "%s", text);
-    cputsxy((40-strlen(text))/2, row, output);
-    refresh();
+    // Calculate the position to center the text
+    int fontSize = 20;
+    int textWidth = MeasureText(text, fontSize);
+    int x = (SCREEN_WIDTH - textWidth) / 2;
+    int y = row * 24; // Spacing between lines
+    
+    // Draw the text using raylib
+    DrawText(text, x, y, fontSize, WHITE);
 }
 
 void display_titles(void) {
     // Show the word DUNGEON using the custom character set
-    char line[41];  // 40 chars plus null terminator
     int row;
     
     // Output the logo line by line
     for (row = 0; row < 8; row++) {
-        // Copy 40 characters from the logo array into our line buffer
-        memcpy(line, &logo[row * 40], 40);
-        line[40] = '\0';  // Null terminate the string
-        
-        // Draw each character in the line
         for (int col = 0; col < 40; col++) {
-            if (line[col] == 35) { // '#' character
-                cputcxy(col, row, '#');
-            } else {
-                cputcxy(col, row, '.');
-            }
+            char c = (logo[row * 40 + col] == 35) ? '#' : '.';
+            draw_char(col, row, c);
         }
     }
 
-    sprintf(output, "The Dungeon");
-    center_text(10, output);
-    center_text(15, "a game by retrogamecoders.com");
-    center_text(20, "press a key");
+    int fontSize = 20;
+    DrawText("The Dungeon", (SCREEN_WIDTH - MeasureText("The Dungeon", 30)) / 2, 10 * 24, 30, WHITE);
+    DrawText("a game by retrogamecoders.com", (SCREEN_WIDTH - MeasureText("a game by retrogamecoders.com", fontSize)) / 2, 15 * 24, fontSize, WHITE);
+    DrawText("press a key", (SCREEN_WIDTH - MeasureText("press a key", fontSize)) / 2, 20 * 24, fontSize, WHITE);
 }
 
 void display_instructions(void) {
-    center_text(6, "instructions");
-    center_text(12, "use the wasd keys to move");
-    center_text(14, "collect the treasure");
-    center_text(16, "avoid the monsters");
-    center_text(20, "press a key to start");
+    int fontSize = 20;
+    int titleSize = 30;
+    
+    DrawText("Instructions", (SCREEN_WIDTH - MeasureText("Instructions", titleSize)) / 2, 6 * 24, titleSize, WHITE);
+    DrawText("use the wasd keys to move", (SCREEN_WIDTH - MeasureText("use the wasd keys to move", fontSize)) / 2, 12 * 24, fontSize, WHITE);
+    DrawText("collect the treasure", (SCREEN_WIDTH - MeasureText("collect the treasure", fontSize)) / 2, 14 * 24, fontSize, WHITE);
+    DrawText("avoid the monsters", (SCREEN_WIDTH - MeasureText("avoid the monsters", fontSize)) / 2, 16 * 24, fontSize, WHITE);
+    DrawText("press a key to start", (SCREEN_WIDTH - MeasureText("press a key to start", fontSize)) / 2, 20 * 24, fontSize, WHITE);
 }
 
 // This is the default title screen
@@ -98,17 +97,20 @@ bool game_over(void) {
     clrscr();
     BeginDrawing();
     
-    center_text(10, "game over");
+    int fontSize = 20;
+    int titleSize = 30;
+    
+    DrawText("Game Over", (SCREEN_WIDTH - MeasureText("Game Over", titleSize)) / 2, 10 * 24, titleSize, WHITE);
     
     timer = dumb_wait(1000);
 
-    center_text(12, "ah, such a shame,");
-    center_text(14, "you were doing so well!");
+    DrawText("ah, such a shame,", (SCREEN_WIDTH - MeasureText("ah, such a shame,", fontSize)) / 2, 12 * 24, fontSize, WHITE);
+    DrawText("you were doing so well!", (SCREEN_WIDTH - MeasureText("you were doing so well!", fontSize)) / 2, 14 * 24, fontSize, WHITE);
     timer = dumb_wait(1000);
     
     sprintf(output, "score:%03d", score);
-    center_text(18, output);
-    center_text(19, "play again (y/n)?");
+    DrawText(output, (SCREEN_WIDTH - MeasureText(output, fontSize)) / 2, 18 * 24, fontSize, WHITE);
+    DrawText("play again (y/n)?", (SCREEN_WIDTH - MeasureText("play again (y/n)?", fontSize)) / 2, 19 * 24, fontSize, WHITE);
     
     EndDrawing();
     

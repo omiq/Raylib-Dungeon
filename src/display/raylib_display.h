@@ -3,6 +3,11 @@
 
 #include <stdbool.h>
 
+// Screen dimensions
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
+#define TILE_SIZE 20
+
 // Initialize the Raylib display
 void init_raylib_display(void);
 
