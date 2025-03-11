@@ -25,6 +25,6 @@ void draw_momentary_object(unsigned int obj_old_x, unsigned int obj_old_y,
                           unsigned int obj_x, unsigned int obj_y, 
                           unsigned int obj_tile, unsigned int delay);
 void draw_move(bool replace);
-void translate_cputcxy(int col, int row, char c);
+
 
 #endif /* NOTCONIO_H */ 

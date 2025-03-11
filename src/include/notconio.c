@@ -118,13 +118,12 @@ void draw_momentary_object(unsigned int obj_old_x, unsigned int obj_old_y,
 }
 
 void draw_move(bool replace) {
-    // No-op in Raylib version - movement is handled by draw_momentary_object
-    (void)replace;
+    // Draw player
+    set_map(old_x, old_y,'.');
+    cputcxy(old_x, old_y, ' ');
+    cputcxy(player_x, player_y, '@');
 }
 
-void translate_cputcxy(int col, int row, char c) {
-    cputcxy(col, row, c);
-}
 
 void update_fov(int player_x, int player_y, int radius) {
     int dy, dx;

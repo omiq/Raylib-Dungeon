@@ -44,10 +44,7 @@ int main(void) {
             
             // Draw game state
             draw_game();
-            printf("%d %d", player_x, player_y);
-            // Debug, arbitrarily show textures:
-            //cputcxy(10, 10, '@');
-            //cputcxy(8, 8, 'g');
+
 
 
 
