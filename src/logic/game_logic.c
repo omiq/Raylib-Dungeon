@@ -306,8 +306,6 @@ void move_enemies(void) {
 }
 
 void game_loop(void) {
-
-
     // Change direction
     if (player_x != old_x || player_y != old_y) {
         direction_x = player_x - old_x;
@@ -319,8 +317,8 @@ void game_loop(void) {
     // Backup the location
     old_x = player_x;
     old_y = player_y;
-
     key = get_key();
+    
 
     // Anything in our path?
     obstruction = false;

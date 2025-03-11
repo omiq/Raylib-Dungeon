@@ -21,6 +21,8 @@ int kbhit(void) {
 }
 
 unsigned char get_key(void) {
+
+    
     // Check keys;
     if (IsKeyPressed(KEY_W) && player_y > 0) {
         player_y--;
