@@ -6,18 +6,20 @@
 #include <raylib.h>
 
 unsigned int dumb_wait(unsigned int delay) {
-    unsigned int counter = 0;
-    // looping till required time is not achieved
-    while (counter < delay * 1000) {
-        counter++;
-    }
+
+    WaitTime(delay/10000);
+
     return delay;
 }
 
 int kbhit(void) {
-    return IsKeyDown(KEY_W) || IsKeyDown(KEY_A) || IsKeyDown(KEY_S) || IsKeyDown(KEY_D) ||
+    int key;
+/**    return IsKeyDown(KEY_W) || IsKeyDown(KEY_A) || IsKeyDown(KEY_S) || IsKeyDown(KEY_D) ||
            IsKeyDown(KEY_O) || IsKeyDown(KEY_P) || IsKeyDown(KEY_F) || IsKeyDown(KEY_Q) ||
            IsKeyDown(KEY_ESCAPE);
+           **/
+
+    return GetKeyPressed() > 0;
 }
 
 unsigned char get_key(void) {

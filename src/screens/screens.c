@@ -67,7 +67,7 @@ int title_screen(void) {
     show_titles = 1;
     clrscr();
     
-    while (!kbhit()) { 
+    while (!GetCharPressed()) { 
         BeginDrawing();
         clear_screen();
         
@@ -77,6 +77,8 @@ int title_screen(void) {
             show_titles = !show_titles;
         } else {
             counter++; 
+            printf("counter: %d\n", counter);
+            WaitTime(0.1);
         }
         
         if (show_titles) {
@@ -87,7 +89,8 @@ int title_screen(void) {
         
         EndDrawing();
     }
-    
+
+
     in_play = true;
     clrscr();
     return counter;

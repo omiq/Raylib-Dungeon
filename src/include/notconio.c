@@ -95,8 +95,9 @@ void output_message(void) {
 void draw_screen(void) {
     // Draw whole screen
     int row, col;
-    //draw_whole_screen = true;
-    //screen_drawn = false;
+
+    draw_move(false);
+
     if (draw_whole_screen && screen_drawn == false) {
         for (row = 0; row < PLAYABLE_HEIGHT; row++) {
             for (col = 0; col < MAZE_WIDTH; col++) {
@@ -110,6 +111,11 @@ void draw_screen(void) {
         update_fov(player_x, player_y, 2);
         //printf("updating fov");
     }
+
+
+    cputcxy(player_x, player_y, '@');
+        
+
 }
 
 void draw_momentary_object(unsigned int obj_old_x, unsigned int obj_old_y,
@@ -126,7 +132,7 @@ void draw_move(bool replace) {
     // Draw player
     set_map(old_x, old_y,'.');
     cputcxy(old_x, old_y, ' ');
-    cputcxy(player_x, player_y, '@');
+    
 }
 
 void update_fov(int player_x, int player_y, int radius) {

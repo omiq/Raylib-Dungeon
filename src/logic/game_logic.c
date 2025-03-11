@@ -107,7 +107,7 @@ void load_room(void) {
                 player_x = this_col;
                 old_y = this_row;
                 old_x = this_col;
-
+                visibility_map[MAP_WIDTH * old_y + old_x] = false;
             }
 
             // Goblin
@@ -306,160 +306,167 @@ void move_enemies(void) {
 }
 
 void game_loop(void) {
-    // Change direction
-    if (player_x != old_x || player_y != old_y) {
-        direction_x = player_x - old_x;
-        direction_y = player_y - old_y;
-    }
 
-    move_enemies();
+    key=0;
 
-    // Backup the location
-    old_x = player_x;
-    old_y = player_y;
+    // Get player input first
     key = get_key();
     
+    // Only process movement and enemies if player made a move
+    if (key != 0) {
+        // Change direction
+        if (player_x != old_x || player_y != old_y) {
+            direction_x = player_x - old_x;
+            direction_y = player_y - old_y;
+        }
 
-    // Anything in our path?
-    obstruction = false;
-    c = get_map(player_x, player_y);
-    
-    // Collision
-    switch (c) {
-        case '#':
-            // Wall               
-            obstruction = true;
-            break;
+        // Backup the location
+        old_x = player_x;
+        old_y = player_y;
+
+        // Anything in our path?
+        obstruction = false;
+        c = get_map(player_x, player_y);
         
-        // Spell
-        case 's':
-            draw_whole_screen = true;
-            sprintf(output, "you activated a spell");
-            break;
-
-        case 'k': // Key +1
-            keys += 1;
-            sprintf(output, "you found a key");
-            break;
-
-        // Door
-        case '+':
-            if (keys > 0) {
-                keys -= 1;
-                score += 5;
-                obstruction = false;
-                sprintf(output, "you opened a door");
-            } else {
-                // Not enough keys to unlock!
-                set_map(player_x, player_y, '-'); // turn into partially open
-                health -= 10; // lose 10 health
+        // Process collisions and interactions
+        switch (c) {
+            case '#':
+                // Wall               
                 obstruction = true;
-                sprintf(output, "ouch!");
-            }
-            break;
-
-        case '-': // Partially open door
-            if (keys > 0) {
-                keys -= 1;
-                score += 5;
-                obstruction = false;
-                sprintf(output, "you opened a door");
-            } else {
-                // Not enough keys to unlock!
-                set_map(player_x, player_y, '.');  // turn into fully open
-                health -= 10;         // lose 10 health
-                obstruction = true;
-                sprintf(output, "who needs keys anyway?");
-            }
-            break;
-
-        case '|': // Sword!
-            sword = true;
+                break;
             
-            if (weapon < 5) {
-                weapon = 5;
-                sprintf(output, "you found a sword!");
-            } else {
-                weapon++;
-                sprintf(output, "+1 to your attack!");
-            }
-            break;
+            // Spell
+            case 's':
+                draw_whole_screen = true;
+                sprintf(output, "you activated a spell");
+                break;
 
-        case '$': // Cash money
-            score += 5;
-            sprintf(output, "ka-ching!");
-            break;
+            case 'k': // Key +1
+                keys += 1;
+                sprintf(output, "you found a key");
+                break;
 
-        case '*': // Potion
-            score += 15;
-            magic += 100;
-            sprintf(output, "power up!");
-            break;
+            // Door
+            case '+':
+                if (keys > 0) {
+                    keys -= 1;
+                    score += 5;
+                    obstruction = false;
+                    sprintf(output, "you opened a door");
+                } else {
+                    // Not enough keys to unlock!
+                    set_map(player_x, player_y, '-'); // turn into partially open
+                    health -= 10; // lose 10 health
+                    obstruction = true;
+                    sprintf(output, "ouch!");
+                }
+                break;
 
-        case 'm': // Cash money
-            score += 15;
-            break;
+            case '-': // Partially open door
+                if (keys > 0) {
+                    keys -= 1;
+                    score += 5;
+                    obstruction = false;
+                    sprintf(output, "you opened a door");
+                } else {
+                    // Not enough keys to unlock!
+                    set_map(player_x, player_y, '.');  // turn into fully open
+                    health -= 10;         // lose 10 health
+                    obstruction = true;
+                    sprintf(output, "who needs keys anyway?");
+                }
+                break;
 
-        case 'h': // Health
-            health += 25;
-            sprintf(output, "ahh that is better!");
-            if (health > 100) health = 100; // Can't be more than 100%!
-            break;
+            case '|': // Sword!
+                sword = true;
+                
+                if (weapon < 5) {
+                    weapon = 5;
+                    sprintf(output, "you found a sword!");
+                } else {
+                    weapon++;
+                    sprintf(output, "+1 to your attack!");
+                }
+                break;
 
-        /* Enemies >> */
-        case 'g': // Gobbo
-            attack(weapon, player_x, player_y);
-            obstruction = true;
-            break;
+            case '$': // Cash money
+                score += 5;
+                sprintf(output, "ka-ching!");
+                break;
 
-        case 'r': // Rats
-            attack(weapon, player_x, player_y);
-            obstruction = true;
-            break;
-        /* ^^ Enemies */
+            case '*': // Potion
+                score += 15;
+                magic += 100;
+                sprintf(output, "power up!");
+                break;
 
-        case 'i': // Idol
-            score += 10;
-            idols += 1;
-            if (idols == room) {
-                room += 1;
-                load_room();
-                draw_screen();
-                idols = 0;
-            }
-            break;
+            case 'm': // Cash money
+                score += 15;
+                break;
 
-        case 0:
-        case 64: // Player
-            break;
-        
-        default:
-            if (c != ' ' && c != '.') {
-                // Figure out what the code is for tile
-                gotoxy(0, 0);
-                sprintf(output, "bumped into ...... %03d", c);
+            case 'h': // Health
+                health += 25;
+                sprintf(output, "ahh that is better!");
+                if (health > 100) health = 100; // Can't be more than 100%!
+                break;
+
+            /* Enemies >> */
+            case 'g': // Gobbo
+                attack(weapon, player_x, player_y);
                 obstruction = true;
-            }
-            break;
-    }
+                break;
 
-    if (output[1] > 32) {
-        // Update message box
-        output_message();
-        timer = dumb_wait(1000);
-    }
+            case 'r': // Rats
+                attack(weapon, player_x, player_y);
+                obstruction = true;
+                break;
+            /* ^^ Enemies */
 
-    // If obstructed then bounce
-    if (obstruction) {
-        player_x = old_x;
-        player_y = old_y;
-    } else {
-        draw_move(false);
-        draw_screen();
-    }
+            case 'i': // Idol
+                score += 10;
+                idols += 1;
+                if (idols == room) {
+                    room += 1;
+                    load_room();
+                    draw_screen();
+                    idols = 0;
+                }
+                break;
 
-    if (health < 1) {
-        in_play = false;
+            case 0:
+            case 64: // Player
+                break;
+            
+            default:
+                if (c != ' ' && c != '.') {
+                    // Figure out what the code is for tile
+                    gotoxy(0, 0);
+                    sprintf(output, "bumped into ...... %03d", c);
+                    obstruction = true;
+                }
+                break;
+        }
+
+        if (output[1] > 32) {
+            // Update message box
+            output_message();
+            timer = dumb_wait(1000);
+        }
+
+        // If obstructed then bounce
+        if (obstruction) {
+            player_x = old_x;
+            player_y = old_y;
+        } else {
+            draw_move(false);
+            // Only move enemies if player successfully moved
+            move_enemies();
+            draw_screen();
+        }
+
+        if (health < 1) {
+            in_play = false;
+        }
     }
 } 
 
