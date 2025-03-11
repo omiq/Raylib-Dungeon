@@ -5,6 +5,7 @@
 #include "../include/notconio.h"
 #include <time.h>
 #include "raylib.h"
+#include "../display/display.h"
 #include "../display/raylib_display.h"
 
 void draw_hud(void);
@@ -49,9 +50,10 @@ void load_room(void) {
     draw_whole_screen = true;  // Changed to true to force full redraw
     screen_drawn = false;
 
-    clrscr();
+    // clrscr();
     
     sprintf(output, "loading room %d", room);
+    printf(output);
     output_message();
 
     // Initialize random seed
@@ -80,6 +82,7 @@ void load_room(void) {
     for (this_row = 0; this_row < PLAYABLE_HEIGHT; this_row++) {
         for (this_col = 0; this_col < MAP_WIDTH; this_col++) {
             game_map[pos] = map[this_row][this_col];
+            printf("%c", game_map[pos]);
             pos++;
         }
     }
@@ -408,6 +411,8 @@ void update_game(void) {
 }
 
 void draw_game(void) {
+
+
     // Draw the maze and game state
     draw_screen();
     

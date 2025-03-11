@@ -8,6 +8,7 @@
 #include "screens/screens.h"
 #include "resource_dir.h"
 #include <limits.h>
+#include "include/notconio.h"
 
 
 
@@ -20,11 +21,19 @@ int main(void) {
     
     while (should_continue && !window_should_close()) {
         // Show title screen first
-        title_screen();
+        //title_screen();
         
-        // Initialize game state
-        init_game();
-        
+		// Initialize if not already running a game
+        //if (in_play != true) {
+        //    init();
+        //}
+
+		run = true;
+		printf("loading room");
+		load_room();
+		// Game on!
+        in_play = true;
+
         // Main game loop
         while (in_play && !window_should_close()) {
             // Update game state
@@ -42,6 +51,11 @@ int main(void) {
             // Draw game state
             draw_game();
             
+            // Debug, arbitrarily show textures:
+            //cputcxy(10, 10, '@');
+            //cputcxy(8, 8, 'g');
+
+
             // End drawing
             EndDrawing();
         }

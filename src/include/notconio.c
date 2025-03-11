@@ -2,6 +2,11 @@
 #include "notconio.h"
 #include "../display/raylib_display.h"
 #include <string.h>
+#include "../include/globals.h"
+#include "../logic/game_logic.h"
+
+// Forward declaration
+void update_fov(int player_x, int player_y, int radius);
 
 // Dummy variable to satisfy ncurses references
 void* stdscr = NULL;
@@ -78,11 +83,32 @@ int cgetc(void) {
 
 // Display functions
 void output_message(void) {
-    // TODO: Implement message display using Raylib
+    char blank[40];
+    sprintf(blank, "%s", "                                      ");
+    cputsxy(0, info_row, blank);
+    cputsxy(1, info_row, output);
+    sprintf(output, "%s", blank);
+    refresh();
 }
 
 void draw_screen(void) {
-    // No-op in Raylib version - screen updates are handled by BeginDrawing/EndDrawing
+    // Draw whole screen
+    int row, col;
+    //draw_whole_screen = true;
+    //screen_drawn = false;
+    if (draw_whole_screen) { // && screen_drawn == false) {
+        for (row = 0; row < PLAYABLE_HEIGHT; row++) {
+            for (col = 0; col < MAZE_WIDTH; col++) {
+                cputcxy(col, row, get_map(col, row));
+            }
+        }
+        //screen_drawn = true;
+        //printf("drawing whole screen");
+    } else {
+        // Update the screen around the player with a set radius 
+        update_fov(player_x, player_y, 2);
+        printf("updating fov");
+    }
 }
 
 void draw_momentary_object(unsigned int obj_old_x, unsigned int obj_old_y,
@@ -102,4 +128,23 @@ void draw_move(bool replace) {
 
 void translate_cputcxy(int col, int row, char c) {
     cputcxy(col, row, c);
+}
+
+void update_fov(int player_x, int player_y, int radius) {
+    int dy, dx;
+    for (dy = -radius; dy <= radius; dy++) {
+        for (dx = -radius; dx <= radius; dx++) {
+            int x = player_x + dx;
+            int y = player_y + dy;
+
+            // Ensure coordinates are within the map bounds
+            if (x >= 0 && x < MAP_WIDTH-3 && y >= 0 && y < PLAYABLE_HEIGHT) {
+                c = get_map(x, y);
+                if (c == ' ') c = '.';
+                cputcxy(x, y, c);
+            }
+        }
+    }
 } 
+
+
