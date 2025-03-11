@@ -420,13 +420,27 @@ void draw_game(void) {
 
 void draw_hud(void) {
     char hud_text[40];
-
-    sprintf(hud_text, "      k:%02d h:%03d *:%03d score:%04d", keys, health, magic, score);
     
     int fontSize = 20;
-    int textWidth = MeasureText(hud_text, fontSize);
-    int x = (SCREEN_WIDTH - textWidth) / 2;
+    int iconSize = 20; // Assuming the textures are 20x20 pixels
+    int padding = 5; // Space between icon and text
+    int startX = (SCREEN_WIDTH - (3 * iconSize + 3 * padding + MeasureText(":00 :000 :000 score:0000", fontSize))) / 2;
     int y = SCREEN_HEIGHT - fontSize - 10; // 10 pixels from the bottom
-    
-    DrawText(hud_text, x, y, fontSize, WHITE);
+
+    // Draw key icon and text
+    DrawTexture(textures['k'], startX, y, WHITE);
+    sprintf(hud_text, ":%02d", keys);
+    DrawText(hud_text, startX + iconSize + padding, y, fontSize, WHITE);
+
+    // Draw health icon and text
+    int healthTextStartX = startX + iconSize + padding + MeasureText(hud_text, fontSize) + padding;
+    DrawTexture(textures['h'], healthTextStartX, y, WHITE);
+    sprintf(hud_text, ":%03d", health);
+    DrawText(hud_text, healthTextStartX + iconSize + padding, y, fontSize, WHITE);
+
+    // Draw magic icon and text
+    int magicTextStartX = healthTextStartX + iconSize + padding + MeasureText(hud_text, fontSize) + padding;
+    DrawTexture(textures['*'], magicTextStartX, y, WHITE);
+    sprintf(hud_text, ":%03d score:%04d", magic, score);
+    DrawText(hud_text, magicTextStartX + iconSize + padding, y, fontSize, WHITE);
 } 

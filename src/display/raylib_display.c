@@ -12,7 +12,7 @@
 #define GRID_HEIGHT 30
 
 // Texture array to store all our character textures
-static Texture2D textures[128];  // ASCII range
+Texture2D textures[128];  // ASCII range
 static bool textures_loaded = false;
 
 // Load all character textures
