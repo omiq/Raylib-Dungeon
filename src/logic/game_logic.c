@@ -4,6 +4,10 @@
 #include "../include/maze.h"
 #include "../include/notconio.h"
 #include <time.h>
+#include "raylib.h"
+#include "../display/raylib_display.h"
+
+void draw_hud(void);
 
 // (re)initialize game
 void init(void) {
@@ -236,8 +240,7 @@ void move_enemies(void) {
 }
 
 void game_loop(void) {
-    sprintf(output, "      k:%02d h:%03d *:%03d score:%04d", keys, health, magic, score);
-    cputsxy(0, MAP_HEIGHT-1, output);
+
 
     // Change direction
     if (player_x != old_x || player_y != old_y) {
@@ -409,10 +412,21 @@ void draw_game(void) {
     draw_screen();
     
     // Draw HUD
-    char hud_text[40];
-    sprintf(hud_text, "Health:%d Score:%d Room:%d", health, score, room);
-    cputsxy(0, 0, hud_text);
+    draw_hud();
     
     // Draw player
     cputcxy(player_x, player_y, '@');
+}
+
+void draw_hud(void) {
+    char hud_text[40];
+
+    sprintf(hud_text, "      k:%02d h:%03d *:%03d score:%04d", keys, health, magic, score);
+    
+    int fontSize = 20;
+    int textWidth = MeasureText(hud_text, fontSize);
+    int x = (SCREEN_WIDTH - textWidth) / 2;
+    int y = SCREEN_HEIGHT - fontSize - 10; // 10 pixels from the bottom
+    
+    DrawText(hud_text, x, y, fontSize, WHITE);
 } 
