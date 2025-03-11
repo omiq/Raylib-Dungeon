@@ -44,4 +44,5 @@ unsigned int this_enemy = 0;
 
 // Map variables
 unsigned char game_map[1000];
+bool visibility_map[MAP_WIDTH * PLAYABLE_HEIGHT];
 unsigned char info_row = 22; 

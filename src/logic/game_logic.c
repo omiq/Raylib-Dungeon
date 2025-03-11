@@ -10,19 +10,27 @@ void draw_hud(void);
 
 // (re)initialize game
 void init(void) {
-    keys = 0;
+    // Initialize player stats
     health = 100;
     score = 0;
     keys = 0;
     room = 1;
     potion = 0;
     magic = 0;
-    enemy_count = 0;
     sword = false;
     weapon = 1;
     idols = 0;
+
+    // Initialize game state
+    enemy_count = 0;
     draw_whole_screen = false;
     screen_drawn = false;
+    in_play = true;
+    run = true;
+    obstruction = false;
+
+    // Clear visibility map
+    memset(visibility_map, 0, sizeof(visibility_map));
 }
 
 unsigned char get_map(char x, char y) {
@@ -49,6 +57,8 @@ void load_room(void) {
     draw_whole_screen = false;
     screen_drawn = false;
 
+    // Initialize visibility map to all unseen
+    memset(visibility_map, 0, sizeof(visibility_map));
 
     clrscr();
     

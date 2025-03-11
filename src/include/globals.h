@@ -5,6 +5,27 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+// Map dimensions
+#define MAP_WIDTH 40
+#define MAP_HEIGHT 24
+
+/* Reserve top 1 and bottom 2 lines for HUD */
+#define HUD_TOP 1
+#define HUD_BOTTOM 2
+#define PLAYABLE_HEIGHT (MAP_HEIGHT - HUD_TOP - HUD_BOTTOM)
+
+/* Define cell grid dimensions based on the playable area */
+#define CELLS_X ((MAP_WIDTH - 1) / 4)
+#define CELLS_Y ((PLAYABLE_HEIGHT - 1) / 4)
+
+/* Maze dimensions after expansion from the cell grid */
+#define MAZE_WIDTH  (CELLS_X * 4 + 1)
+#define MAZE_HEIGHT (CELLS_Y * 4 + 1)
+
+/* Passage dimensions in each cell */
+#define CELL_WIDTH  3
+#define CELL_HEIGHT 3
+
 // Game state variables
 extern bool run;
 extern bool in_play;
@@ -62,27 +83,7 @@ extern unsigned int this_enemy;
 
 // Map variables
 extern unsigned char game_map[1000];
-
-// Map dimensions (from maze.h)
-#define MAP_WIDTH 40
-#define MAP_HEIGHT 24
+extern bool visibility_map[MAP_WIDTH * PLAYABLE_HEIGHT];  // Track which tiles have been revealed
 extern unsigned char info_row;
-
-/* Reserve top 1 and bottom 2 lines for HUD */
-#define HUD_TOP 1
-#define HUD_BOTTOM 2
-#define PLAYABLE_HEIGHT (MAP_HEIGHT - HUD_TOP - HUD_BOTTOM)
-
-/* Define cell grid dimensions based on the playable area */
-#define CELLS_X ((MAP_WIDTH - 1) / 4)
-#define CELLS_Y ((PLAYABLE_HEIGHT - 1) / 4)
-
-/* Maze dimensions after expansion from the cell grid */
-#define MAZE_WIDTH  (CELLS_X * 4 + 1)
-#define MAZE_HEIGHT (CELLS_Y * 4 + 1)
-
-/* Passage dimensions in each cell */
-#define CELL_WIDTH  3
-#define CELL_HEIGHT 3
 
 #endif /* GLOBALS_H */ 

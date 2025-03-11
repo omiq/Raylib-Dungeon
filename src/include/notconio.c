@@ -1,5 +1,10 @@
-#include <raylib.h>
 #include "notconio.h"
+#include "globals.h"
+#include "raylib.h"
+
+void cputcxy_dark(int x, int y, unsigned char c);
+void update_fov(int player_x, int player_y, int radius);
+
 #include "../display/display.h"
 #include <string.h>
 #include "../include/globals.h"
@@ -124,22 +129,50 @@ void draw_move(bool replace) {
     cputcxy(player_x, player_y, '@');
 }
 
-
 void update_fov(int player_x, int player_y, int radius) {
-    int dy, dx;
-    for (dy = -radius; dy <= radius; dy++) {
-        for (dx = -radius; dx <= radius; dx++) {
-            int x = player_x + dx;
-            int y = player_y + dy;
-
-            // Ensure coordinates are within the map bounds
-            if (x >= 0 && x < MAP_WIDTH-3 && y >= 0 && y < PLAYABLE_HEIGHT) {
-                c = get_map(x, y);
-                if (c == ' ') c = '.';
-                cputcxy(x, y, c);
+    for (int y = player_y - radius; y <= player_y + radius; y++) {
+        for (int x = player_x - radius; x <= player_x + radius; x++) {
+            // Check if coordinates are within map bounds
+            if (y >= 0 && y < PLAYABLE_HEIGHT && x >= 0 && x < MAP_WIDTH) {
+                // Mark tile as visible
+                visibility_map[MAP_WIDTH * y + x] = true;
+                
+                // Draw the current FOV with full brightness
+                unsigned char tile = get_map(x, y);
+                if (tile != 0) {
+                    cputcxy(x, y, tile);
+                }
+            }
+        }
+    }
+    
+    // Draw previously revealed tiles outside FOV in darker color
+    for (int y = 0; y < PLAYABLE_HEIGHT; y++) {
+        for (int x = 0; x < MAP_WIDTH; x++) {
+            // Skip tiles in current FOV
+            if (abs(x - player_x) <= radius && abs(y - player_y) <= radius) {
+                continue;
+            }
+            
+            // If tile was previously revealed but not in current FOV
+            if (visibility_map[MAP_WIDTH * y + x]) {
+                unsigned char tile = get_map(x, y);
+                if (tile != 0) {
+                    cputcxy_dark(x, y, tile);
+                }
             }
         }
     }
 } 
+
+void cputcxy_dark(int x, int y, unsigned char c) {
+    if (c == ' ') c = '.';
+    Color darkColor = {128, 128, 128, 255};  // Gray color for revealed but not in FOV
+    if (textures[c].id != 0) {
+        DrawTexture(textures[c], x * TILE_SIZE, y * TILE_SIZE, darkColor);
+    } else if (c == '.') {
+        DrawTexture(textures['.'], x * TILE_SIZE, y * TILE_SIZE, darkColor);
+    }
+}
 
 
