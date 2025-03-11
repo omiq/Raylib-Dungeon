@@ -180,7 +180,7 @@ void attack(unsigned int weapon, unsigned int ax, unsigned int ay) {
         if (enemies[this_enemy].health > 0) {
             sprintf(output, "hit!! enemy health: %3d    ", enemies[this_enemy].health);
             output_message();
-            timer = dumb_wait(1000);
+            
         }
     } else {
         sprintf(output, "miss! enemy health: %3d ", enemies[this_enemy].health);
@@ -190,13 +190,13 @@ void attack(unsigned int weapon, unsigned int ax, unsigned int ay) {
             (player_y == ay && (player_x == ax + 1 || player_x == ax - 1))) {
             health -= enemies[this_enemy].strength;
         }
-        timer = dumb_wait(1000);
+        
     }
 
     if (enemies[this_enemy].health < 1) {
         // Success!
         sprintf(output, "enemy defeated!");
-        output_message();
+        
         
         // Draw tile in new location
         cputcxy(ax, ay, '.'); 
@@ -205,7 +205,7 @@ void attack(unsigned int weapon, unsigned int ax, unsigned int ay) {
 
         // Up the score
         score += 10;
-        timer = dumb_wait(1000);
+        
     }
 }
 
@@ -223,7 +223,7 @@ void enemy_attack(unsigned int this_enemy) {
         
         sprintf(output, "ouch! health: %3d", health);
         output_message();
-        timer = dumb_wait(1000);
+        
     } else {
         enemies[this_enemy].health -= 5;
         if (enemies[this_enemy].health < 1) {
@@ -240,7 +240,7 @@ void enemy_attack(unsigned int this_enemy) {
             output_message();
         }
         
-        timer = dumb_wait(1000);
+        
     }
 
     if (health < 1) {
@@ -248,7 +248,7 @@ void enemy_attack(unsigned int this_enemy) {
         sprintf(output, "enemy defeated you!");
         output_message();
         health = 0;
-        timer = dumb_wait(1000);
+        
     }
 }
 
@@ -450,7 +450,7 @@ void game_loop(void) {
         if (output[1] > 32) {
             // Update message box
             output_message();
-            timer = dumb_wait(1000);
+            
         }
 
         // If obstructed then bounce

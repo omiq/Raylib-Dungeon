@@ -89,7 +89,17 @@ int cgetc(void) {
 // Display functions
 void output_message(void) {
     int titleSize = 30;
+    BeginDrawing();
     DrawText(output, (SCREEN_WIDTH - MeasureText(output, titleSize)) / 2, 500, titleSize, WHITE);
+    EndDrawing();
+    
+    WaitTime(.5);
+    
+    BeginDrawing();
+    DrawText(output, (SCREEN_WIDTH - MeasureText(output, titleSize)) / 2, 500, titleSize, BLACK);
+    EndDrawing();
+    
+    output[1] = '\0';
 }
 
 void draw_screen(void) {
