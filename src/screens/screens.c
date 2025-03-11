@@ -3,7 +3,7 @@
 #include "../include/maze.h"
 #include "../input/input.h"
 #include "../logic/game_logic.h"
-#include "../display/raylib_display.h"
+#include "../display/display.h"
 #include <raylib.h>
 #include "../include/notconio.h"
 #include <string.h>

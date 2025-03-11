@@ -5,8 +5,6 @@
 #include "../include/notconio.h"
 #include <time.h>
 #include "raylib.h"
-#include "../display/display.h"
-#include "../display/raylib_display.h"
 
 void draw_hud(void);
 
@@ -41,52 +39,107 @@ void set_map(char x, char y, int tile) {
     game_map[MAP_WIDTH*y+x] = tile;
 }
 
+
 void load_room(void) {
     int pos = 0;
     player_x = -1;
     player_y = -1;
     old_x = -1;
     old_y = -1;
-    draw_whole_screen = true;  // Changed to true to force full redraw
+    draw_whole_screen = false;
     screen_drawn = false;
 
-    // clrscr();
+
+    clrscr();
     
     sprintf(output, "loading room %d", room);
-    printf(output);
     output_message();
 
-    // Initialize random seed
     srand((unsigned)time(NULL));
-    
-    // Generate the maze
     carveMaze();
     placePlayer();
 
-    // Place enemies and items based on room level
-    for (i = 0; i < room-1; i++) placeObject('g');  // Goblins
-    for (i = 0; i < room; i++) placeObject('i');    // Idols
-    for (i = 0; i < room+1; i++) placeObject('r');  // Rats
+    // 1 Gobbo less than per room level
+    for (i = 0; i < room-1; i++) placeObject('g');
+    
+    // 1 piece of idol per room level
+    for (i = 0; i < room; i++) placeObject('i');
+    
+    // Increase rats per room level   
+    for (i = 0; i < room+1; i++) placeObject('r');
 
-    // Place other items
-    placeObject('*');  // Health potion
-    placeObject('|');  // Sword
-    placeObject('$');  // Treasure
-    placeObject('h');  // Health boost
-    placeObject('k');  // Key
-    placeObject('s');  // Spell
-    placeHDoor();      // Horizontal door
-    placeVDoor();      // Vertical door
+    placeObject('*');
+    placeObject('|');
+    placeObject('$');
+    placeObject('h');
+    placeObject('k');
+    placeObject('s'); // spell
+    placeHDoor();
+    placeVDoor();
 
-    // Copy the generated maze into the game map
+    /* Copy the generated maze into the full map.
+       First fill the entire map with walls. */
     for (this_row = 0; this_row < PLAYABLE_HEIGHT; this_row++) {
         for (this_col = 0; this_col < MAP_WIDTH; this_col++) {
-            game_map[pos] = map[this_row][this_col];
-            printf("%c", game_map[pos]);
-            pos++;
+            game_map[pos] = '#';   
+            pos++;  
+        }
+    }
+
+    pos = 0;
+    for (this_row = 0; this_row < PLAYABLE_HEIGHT; this_row++) {  
+        for (this_col = 0; this_col < MAP_WIDTH; this_col++) { 
+            c = map[this_row][this_col];
+
+            // Player x and y
+            if (c == '@') {
+                player_y = this_row;
+                player_x = this_col;
+                old_y = this_row;
+                old_x = this_col;
+
+            }
+
+            // Goblin
+            if (c == 'g') {
+                // Increment for next enemy (Enemy 0 is counted as no enemy)
+                enemy_count += 1;
+
+                // Create the enemy in the list
+                enemies[enemy_count].tile = c;
+                enemies[enemy_count].room = room;
+                enemies[enemy_count].x = this_col;
+                enemies[enemy_count].y = this_row;
+                enemies[enemy_count].old_x = enemies[enemy_count].x;
+                enemies[enemy_count].old_y = enemies[enemy_count].y;
+                enemies[enemy_count].health = 30;
+                enemies[enemy_count].strength = 5;
+                enemies[enemy_count].speed = 1;
+                enemies[enemy_count].armour = 10;
+            }  
+            // Rat
+            else if (c == 'r') {
+                // Increment for next enemy (Enemy 0 is counted as no enemy)
+                enemy_count += 1;
+
+                // Create the enemy in the list
+                enemies[enemy_count].tile = c;
+                enemies[enemy_count].room = room;
+                enemies[enemy_count].x = this_col;
+                enemies[enemy_count].y = this_row;
+                enemies[enemy_count].old_x = enemies[enemy_count].x;
+                enemies[enemy_count].old_y = enemies[enemy_count].y;
+                enemies[enemy_count].health = 15;
+                enemies[enemy_count].strength = 5;
+                enemies[enemy_count].speed = 2;
+                enemies[enemy_count].armour = 0;
+            }  
+            game_map[pos] = c;   
+            pos++;  
         }
     }
 }
+
 
 // Returns the enemy for a given x,y coord
 unsigned int which_enemy(unsigned int ex, unsigned int ey) {
@@ -412,6 +465,9 @@ void update_game(void) {
 
 void draw_game(void) {
 
+    // Clear screen and begin drawing
+    clear_screen();
+    BeginDrawing();
 
     // Draw the maze and game state
     draw_screen();
@@ -421,6 +477,9 @@ void draw_game(void) {
     
     // Draw player
     cputcxy(player_x, player_y, '@');
+
+    // End drawing
+    EndDrawing();
 }
 
 void draw_hud(void) {
@@ -431,6 +490,10 @@ void draw_hud(void) {
     int padding = 5; // Space between icon and text
     int startX = (SCREEN_WIDTH - (3 * iconSize + 3 * padding + MeasureText(":00 :000 :000 score:0000", fontSize))) / 2;
     int y = SCREEN_HEIGHT - fontSize - 10; // 10 pixels from the bottom
+
+
+    sprintf(hud_text, "%02d,%02d", player_x, player_y);
+    DrawText(hud_text, 0, 0, fontSize, WHITE);
 
     // Draw key icon and text
     DrawTexture(textures['k'], startX, y, WHITE);

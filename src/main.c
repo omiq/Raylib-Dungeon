@@ -1,6 +1,6 @@
 // Raylib and SearchAndSetResourceDir
 #include "raylib.h"
-#include "display/raylib_display.h"
+#include "display/display.h"
 #include "include/globals.h"
 #include "include/maze.h"
 #include "input/input.h"
@@ -21,43 +21,36 @@ int main(void) {
     
     while (should_continue && !window_should_close()) {
         // Show title screen first
-        //title_screen();
+       title_screen();
         
 		// Initialize if not already running a game
-        //if (in_play != true) {
-        //    init();
-        //}
+       if (in_play != true) {
+           init();
+       }
 
 		run = true;
-		printf("loading room");
-		load_room();
+
 		// Game on!
         in_play = true;
 
+		printf("loading room");
+		load_room();
+
         // Main game loop
         while (in_play && !window_should_close()) {
+
             // Update game state
             update_game();
             
-            // Check for ESCAPE or Q key press to end the game
-            if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_Q)) {
-                in_play = false;
-            }
-            
-            // Clear screen and begin drawing
-            clear_screen();
-            BeginDrawing();
-            
             // Draw game state
             draw_game();
-            
+            printf("%d %d", player_x, player_y);
             // Debug, arbitrarily show textures:
             //cputcxy(10, 10, '@');
             //cputcxy(8, 8, 'g');
 
 
-            // End drawing
-            EndDrawing();
+
         }
         
         // If we're not in play but haven't closed the window, show game over

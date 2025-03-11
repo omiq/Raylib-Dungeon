@@ -1,6 +1,6 @@
 #include <raylib.h>
 #include "notconio.h"
-#include "../display/raylib_display.h"
+#include "../display/display.h"
 #include <string.h>
 #include "../include/globals.h"
 #include "../logic/game_logic.h"
@@ -84,11 +84,19 @@ int cgetc(void) {
 // Display functions
 void output_message(void) {
     char blank[40];
-    sprintf(blank, "%s", "                                      ");
-    cputsxy(0, info_row, blank);
-    cputsxy(1, info_row, output);
-    sprintf(output, "%s", blank);
-    refresh();
+    int fontSize = 20;
+    int titleSize = 30;
+    
+
+    //sprintf(blank, "%s", "                                      ");
+    //cputsxy(0, info_row, blank);
+    //cputsxy(1, info_row, output);
+    //sprintf(output, "%s", blank);
+    
+    
+    DrawText(output, (SCREEN_WIDTH - MeasureText(output, titleSize)) / 2, 500, titleSize, WHITE);
+    
+
 }
 
 void draw_screen(void) {
@@ -96,18 +104,18 @@ void draw_screen(void) {
     int row, col;
     //draw_whole_screen = true;
     //screen_drawn = false;
-    if (draw_whole_screen) { // && screen_drawn == false) {
+    if (draw_whole_screen && screen_drawn == false) {
         for (row = 0; row < PLAYABLE_HEIGHT; row++) {
             for (col = 0; col < MAZE_WIDTH; col++) {
                 cputcxy(col, row, get_map(col, row));
             }
         }
-        //screen_drawn = true;
-        //printf("drawing whole screen");
+        screen_drawn = true;
+        printf("drawing whole screen");
     } else {
         // Update the screen around the player with a set radius 
         update_fov(player_x, player_y, 2);
-        printf("updating fov");
+        //printf("updating fov");
     }
 }
 

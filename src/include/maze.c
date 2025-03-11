@@ -1,9 +1,7 @@
 #include "maze.h"
 #include <stdlib.h>
-
-#ifndef __CC65__
 #include <time.h>
-#endif
+
 // Global maze array
 unsigned char map[MAP_HEIGHT][MAP_WIDTH + 1];
 
@@ -14,15 +12,7 @@ int stackSize = 0;
 // Global visited array for the cell grid
 int visited[CELLS_Y][CELLS_X];
 
-#ifdef __CC65__
-time_t time(time_t* t) {
-    time_t current_time = rand() % (100000000);
-    if (t != NULL) {
-        *t = current_time;
-    }
-    return current_time;
-}
-#endif
+
 
 /* Push a cell onto the stack */
 void push(const Cell *this_cell) {

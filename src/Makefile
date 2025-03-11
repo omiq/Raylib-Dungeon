@@ -17,7 +17,7 @@ endif
 
 # Source files
 SRCS = main.c \
-       display/raylib_display.c \
+       display/display.c \
        include/globals.c \
        include/maze.c \
        input/input.c \

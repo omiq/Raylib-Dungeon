@@ -1,73 +1,122 @@
+#include "raylib.h"
 #include "display.h"
-#include "../include/notconio.h"
+#include <string.h>
+#include <stdio.h>
+#include <limits.h>
+#include "../include/resource_dir.h"
 
-void output_message(void) {
-    char blank[40];
-    sprintf(blank, "%s", "                                      ");
-    cputsxy(0, info_row, blank);
-    cputsxy(1, info_row, output);
-    sprintf(output, "%s", blank);
-    refresh();
-}
+#define TILE_SIZE 20
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
+#define GRID_WIDTH 40
+#define GRID_HEIGHT 30
 
-void draw_screen(void) {
-    // Draw whole screen
-    int row, col;
+// Texture array to store all our character textures
+Texture2D textures[128];  // ASCII range
+static bool textures_loaded = false;
 
-    if (draw_whole_screen && screen_drawn == false) {
-        for (row = 0; row < PLAYABLE_HEIGHT; row++) {
-            for (col = 0; col < MAZE_WIDTH; col++) {
-                cputcxy(col, row, get_map(col, row));
-            }
+// Load all character textures
+static void load_textures(void) {
+
+	// Find the resources directory
+	if (!SearchAndSetResourceDir("resources")) {
+		printf("Failed to find resources directory. Please make sure the resources folder is in the same directory as the executable.\n");
+		CloseWindow();
+
+	}
+
+	// Load resources with error checking
+	char resourcePath[PATH_MAX];
+	
+	//GetResourcePath("sprite.png", filename, sizeof(filename));
+
+
+    if (textures_loaded) return;
+    
+    char filename[256];
+    for (int i = 0; i < 128; i++) {
+        // Convert ASCII character to filename
+        if (i == '@') GetResourcePath("@.png", filename, sizeof(filename));
+        else if (i == '#') GetResourcePath("#.png", filename, sizeof(filename));
+        else if (i == '$') GetResourcePath("$.png", filename, sizeof(filename));
+        else if (i == '*') GetResourcePath("*.png", filename, sizeof(filename));
+        else if (i == '+') GetResourcePath("+.png", filename, sizeof(filename));
+        else if (i == '-') GetResourcePath("-.png", filename, sizeof(filename));
+        else if (i == '|') GetResourcePath("|.png", filename, sizeof(filename));
+        else if (i == 'g') GetResourcePath("g.png", filename, sizeof(filename));
+        else if (i == 'h') GetResourcePath("h.png", filename, sizeof(filename));
+        else if (i == 'i') GetResourcePath("i.png", filename, sizeof(filename));
+        else if (i == 'k') GetResourcePath("k.png", filename, sizeof(filename));
+        else if (i == 'r') GetResourcePath("r.png", filename, sizeof(filename));
+        else if (i == 's') GetResourcePath("s.png", filename, sizeof(filename));
+        else if (i == '.') GetResourcePath("..png", filename, sizeof(filename));
+        else {
+            // For other characters, use a default texture or skip
+            continue;
         }
-        screen_drawn = true;
-    } else {
-        // Update the screen around the player with a set radius 
-        update_fov(player_x, player_y, 2);
+        
+        textures[i] = LoadTexture(filename);
     }
+    textures_loaded = true;
 }
 
-void draw_momentary_object(unsigned int obj_old_x, unsigned int obj_old_y, 
-                          unsigned int obj_x, unsigned int obj_y, 
-                          unsigned int obj_tile, unsigned int delay) {
-    // Replace tile
-    cputcxy(obj_old_x, obj_old_y, get_map(obj_old_x, obj_old_y));
+// Initialize Raylib display
+void init_raylib_display(void) {
 
-    // Draw tile in new location
-    cputcxy(obj_x, obj_y, obj_tile); 
-   
-    // Delay
-    timer = dumb_wait(delay);
+    // Set to 60 frames-per-second
+	SetTargetFPS(60);               
 
-    // Replace tile again
-    cputcxy(obj_x, obj_y, get_map(obj_x, obj_y));
+	// Tell the window to use vsync and work on high DPI displays
+	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
+
+	// Create the window and OpenGL context
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Retro Dungeon");
+
+    load_textures();
 }
 
-void draw_move(bool replace) {
-    // Delete the player character
-    if (!replace) {
-        set_map(old_x, old_y, '.');
-    }
-
-    // Draw new location
-    cputcxy(old_x, old_y, get_map(old_x, old_y));
-    cputcxy(player_x, player_y, 64); 
-    set_map(player_x, player_y, 64);
-}
-
-void update_fov(int player_x, int player_y, int radius) {
-    int dy, dx;
-    for (dy = -radius; dy <= radius; dy++) {
-        for (dx = -radius; dx <= radius; dx++) {
-            int x = player_x + dx;
-            int y = player_y + dy;
-
-            // Ensure coordinates are within the map bounds
-            if (x >= 0 && x < MAP_WIDTH-3 && y >= 0 && y < PLAYABLE_HEIGHT) {
-                c = get_map(x, y);
-                if (c == ' ') c = '.';
-                cputcxy(x, y, c);
-            }
+// Close Raylib display
+void close_raylib_display(void) {
+    for (int i = 0; i < 128; i++) {
+        if (textures[i].id != 0) {
+            UnloadTexture(textures[i]);
         }
     }
+    CloseWindow();
+}
+
+// Draw a character at the specified grid position
+void draw_char(int x, int y, unsigned char c) {
+    if (textures[c].id != 0) {
+        DrawTexture(textures[c], x * TILE_SIZE, y * TILE_SIZE, WHITE);
+    } else if (c == ' ' || c == '.') {
+        // Draw floor texture for empty spaces
+        if (textures['.'].id != 0) {
+            DrawTexture(textures['.'], x * TILE_SIZE, y * TILE_SIZE, WHITE);
+        }
+    }
+}
+
+// Draw a string at the specified grid position
+void draw_string(int x, int y, const char* str) {
+    int current_x = x;
+    for (const char* c = str; *c != '\0'; c++) {
+        draw_char(current_x, y, *c);
+        current_x++;
+    }
+}
+
+// Clear the screen
+void clear_screen(void) {
+    ClearBackground(BLACK);
+}
+
+// Get the current frame time
+float get_frame_time(void) {
+    return GetFrameTime();
+}
+
+// Check if window should close
+bool window_should_close(void) {
+    return WindowShouldClose();
 } 
