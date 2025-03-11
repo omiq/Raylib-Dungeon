@@ -23,7 +23,8 @@ SRCS = main.c \
        input/input.c \
        logic/game_logic.c \
        screens/screens.c \
-       include/notconio.c
+       include/notconio.c \
+       include/resource_dir.c
 
 # Object files
 OBJS = $(SRCS:.c=.o)

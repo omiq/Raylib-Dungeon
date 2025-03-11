@@ -19,7 +19,7 @@ void init_raylib_display(void);
 void close_raylib_display(void);
 
 // Draw a character at the specified grid position
-void draw_char(int x, int y, char c);
+void draw_char(int x, int y, unsigned char c);
 
 // Draw a string at the specified grid position
 void draw_string(int x, int y, const char* str);

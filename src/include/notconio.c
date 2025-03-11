@@ -83,20 +83,8 @@ int cgetc(void) {
 
 // Display functions
 void output_message(void) {
-    char blank[40];
-    int fontSize = 20;
     int titleSize = 30;
-    
-
-    //sprintf(blank, "%s", "                                      ");
-    //cputsxy(0, info_row, blank);
-    //cputsxy(1, info_row, output);
-    //sprintf(output, "%s", blank);
-    
-    
     DrawText(output, (SCREEN_WIDTH - MeasureText(output, titleSize)) / 2, 500, titleSize, WHITE);
-    
-
 }
 
 void draw_screen(void) {

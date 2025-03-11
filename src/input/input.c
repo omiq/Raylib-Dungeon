@@ -6,12 +6,11 @@
 #include <raylib.h>
 
 unsigned int dumb_wait(unsigned int delay) {
-    // Storing start time
-    clock_t start_time = clock();
-    int counter = 0;
+    unsigned int counter = 0;
     // looping till required time is not achieved
-    while (clock() < start_time + delay*250)
+    while (counter < delay * 1000) {
         counter++;
+    }
     return delay;
 }
 

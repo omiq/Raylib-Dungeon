@@ -17,19 +17,11 @@ static bool textures_loaded = false;
 
 // Load all character textures
 static void load_textures(void) {
-
-	// Find the resources directory
-	if (!SearchAndSetResourceDir("resources")) {
-		printf("Failed to find resources directory. Please make sure the resources folder is in the same directory as the executable.\n");
-		CloseWindow();
-
-	}
-
-	// Load resources with error checking
-	char resourcePath[PATH_MAX];
-	
-	//GetResourcePath("sprite.png", filename, sizeof(filename));
-
+    // Find the resources directory
+    if (!SearchAndSetResourceDir("resources")) {
+        printf("Failed to find resources directory. Please make sure the resources folder is in the same directory as the executable.\n");
+        CloseWindow();
+    }
 
     if (textures_loaded) return;
     
