@@ -70,7 +70,7 @@ void load_room(void) {
     placePlayer();
 
     // 1 Gobbo less than per room level
-    for (i = 0; i < 20+room-1; i++) placeObject('g');
+    for (i = 0; i < room-1; i++) placeObject('g');
     
     // 1 piece of idol per room level
     for (i = 0; i < room; i++) placeObject('i');
