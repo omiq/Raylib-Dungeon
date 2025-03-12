@@ -290,13 +290,6 @@ void move_enemies(void) {
             }
 
 
-            if (
-                 get_map(enemies[i].x, enemies[i].y) == '@' || 
-                 get_map(enemies[i].x-1, enemies[i].y) == '@' ||
-                 get_map(enemies[i].x+1, enemies[i].y) == '@' ||
-                 get_map(enemies[i].x, enemies[i].y-1) == '@' ||
-                 get_map(enemies[i].x, enemies[i].y+1) == '@'
-            ) enemy_attack(i);
 
 
             // Redraw
@@ -313,6 +306,15 @@ void move_enemies(void) {
                 set_map(enemies[i].x, enemies[i].y, enemies[i].tile);
                 cputcxy(enemies[i].x, enemies[i].y, enemies[i].tile);
             }
+
+            if (
+                 get_map(enemies[i].x, enemies[i].y) == '@' || 
+                 get_map(enemies[i].x-1, enemies[i].y) == '@' ||
+                 get_map(enemies[i].x+1, enemies[i].y) == '@' ||
+                 get_map(enemies[i].x, enemies[i].y-1) == '@' ||
+                 get_map(enemies[i].x, enemies[i].y+1) == '@'
+            ) enemy_attack(i);
+
         }
     }
 }
