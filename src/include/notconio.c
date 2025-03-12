@@ -105,8 +105,8 @@ void output_message(void) {
 void draw_screen(void) {
     // Draw whole screen
     int row, col;
-
-//    draw_move(false);
+//draw_whole_screen=true;
+//screen_drawn = false;
 
     if (draw_whole_screen && screen_drawn == false) {
         for (row = 0; row < PLAYABLE_HEIGHT; row++) {
@@ -118,14 +118,13 @@ void draw_screen(void) {
         screen_drawn = true;
         printf("drawing whole screen");
     } else {
+
+        
         // Update the screen around the player with a set radius 
         update_fov(player_x, player_y, 2);
-        //printf("updating fov");
+        
     }
 
-    cputcxy(old_x, old_y, ' ');
-    set_map(old_x, old_y, '.');
-    cputcxy(player_x, player_y, '@');
         
 
 }
@@ -148,6 +147,8 @@ void draw_momentary_object(unsigned int obj_old_x, unsigned int obj_old_y,
 
 
 void update_fov(int player_x, int player_y, int radius) {
+    cputcxy(old_x, old_y, ' ');
+
     for (int y = player_y - radius; y <= player_y + radius; y++) {
         for (int x = player_x - radius; x <= player_x + radius; x++) {
             // Check if coordinates are within map bounds
@@ -165,6 +166,8 @@ void update_fov(int player_x, int player_y, int radius) {
         }
     }
     
+    cputcxy(player_x, player_y, '@');
+
     // Draw previously revealed tiles outside FOV in darker color
     for (int y = 0; y < PLAYABLE_HEIGHT; y++) {
         for (int x = 0; x < MAP_WIDTH; x++) {

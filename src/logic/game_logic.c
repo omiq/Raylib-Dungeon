@@ -316,6 +316,8 @@ void game_loop(void) {
     // Backup the location
     old_x = player_x;
     old_y = player_y;
+    set_map(old_x, old_y, '.');
+
 
     // Get player input first
     key = get_key();
@@ -473,6 +475,8 @@ void game_loop(void) {
         if (health < 1) {
             in_play = false;
         }
+
+        set_map(player_x, player_y, '@');
 
 //        draw_screen();
 
