@@ -289,12 +289,21 @@ void move_enemies(void) {
                 if (enemies[i].y < player_y) enemies[i].y += 1;
             }
 
+
+            if (
+                 get_map(enemies[i].x, enemies[i].y) == '@' || 
+                 get_map(enemies[i].x-1, enemies[i].y) == '@' ||
+                 get_map(enemies[i].x+1, enemies[i].y) == '@' ||
+                 get_map(enemies[i].x, enemies[i].y-1) == '@' ||
+                 get_map(enemies[i].x, enemies[i].y+1) == '@'
+            ) enemy_attack(i);
+
+
             // Redraw
             c = get_map(enemies[i].x, enemies[i].y);
             if ((c != ' ' && c != '.') || c == enemies[i].tile) {
                 enemies[i].x = enemies[i].old_x;
                 enemies[i].y = enemies[i].old_y;
-                if (c == '@') enemy_attack(i);
             } else {
                 set_map(enemies[i].old_x, enemies[i].old_y, '.');
                 cputcxy(enemies[i].old_x, enemies[i].old_y, '.');
