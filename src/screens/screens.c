@@ -97,34 +97,36 @@ int title_screen(void) {
 }
 
 bool game_over(void) {
-    clrscr();
-    BeginDrawing();
+    int key = 0;
     
-    int fontSize = 20;
-    int titleSize = 30;
-    
-    DrawText("Game Over", (SCREEN_WIDTH - MeasureText("Game Over", titleSize)) / 2, 10 * 24, titleSize, WHITE);
-    
-    timer = dumb_wait(1000);
+    while (true) { 
+        BeginDrawing();
+        clrscr();
+        
+        int fontSize = 20;
+        int titleSize = 30;
+        
+        DrawText("Game Over", (SCREEN_WIDTH - MeasureText("Game Over", titleSize)) / 2, 10 * 24, titleSize, WHITE);
+        DrawText("ah, such a shame,", (SCREEN_WIDTH - MeasureText("ah, such a shame,", fontSize)) / 2, 12 * 24, fontSize, WHITE);
+        DrawText("you were doing so well!", (SCREEN_WIDTH - MeasureText("you were doing so well!", fontSize)) / 2, 14 * 24, fontSize, WHITE);
 
-    DrawText("ah, such a shame,", (SCREEN_WIDTH - MeasureText("ah, such a shame,", fontSize)) / 2, 12 * 24, fontSize, WHITE);
-    DrawText("you were doing so well!", (SCREEN_WIDTH - MeasureText("you were doing so well!", fontSize)) / 2, 14 * 24, fontSize, WHITE);
-    timer = dumb_wait(1000);
-    
-    sprintf(output, "score:%03d", score);
-    DrawText(output, (SCREEN_WIDTH - MeasureText(output, fontSize)) / 2, 18 * 24, fontSize, WHITE);
-    DrawText("play again (y/n)?", (SCREEN_WIDTH - MeasureText("play again (y/n)?", fontSize)) / 2, 19 * 24, fontSize, WHITE);
-    
-    EndDrawing();
-    
-    key = cgetc();
-    in_play = false;
-    if (key == 'n') {
-        cursor(1);
-        echo();
-        refresh();
-        return false;
-    } else {
-        return true;
+        sprintf(output, "score:%03d", score);
+        DrawText(output, (SCREEN_WIDTH - MeasureText(output, fontSize)) / 2, 18 * 24, fontSize, WHITE);
+        DrawText("play again (y/n)?", (SCREEN_WIDTH - MeasureText("play again (y/n)?", fontSize)) / 2, 19 * 24, fontSize, WHITE);
+        
+        EndDrawing();
+        
+        in_play = false;
+        
+        // Check for key press
+        key = GetCharPressed();
+        if (key == 'y' || key == 'Y') {
+            return true;
+        } else if (key == 'n' || key == 'N') {
+            return false;
+        }
+        
+        // Small delay to prevent CPU hogging
+        WaitTime(0.05);
     }
 } 
