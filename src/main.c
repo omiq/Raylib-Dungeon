@@ -33,7 +33,7 @@ int main(void) {
 		// Game on!
         in_play = true;
 
-		printf("loading room");
+		printf("loading room %d", room);
 		load_room();
 
         // Main game loop

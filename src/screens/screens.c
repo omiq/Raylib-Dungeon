@@ -121,6 +121,7 @@ bool game_over(void) {
         // Check for key press
         key = GetCharPressed();
         if (key == 'y' || key == 'Y') {
+            init();
             return true;
         } else if (key == 'n' || key == 'N') {
             return false;

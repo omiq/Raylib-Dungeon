@@ -24,7 +24,7 @@ int magic = 0;
 unsigned int score = 0;
 bool sword = false;
 unsigned char weapon = 1;
-unsigned char room = 2;
+unsigned char room = 1;
 
 // Utility variables
 unsigned int this_row = 0;
