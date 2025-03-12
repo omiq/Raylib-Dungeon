@@ -509,8 +509,8 @@ void draw_hud(void) {
     int y = SCREEN_HEIGHT - fontSize - 10; // 10 pixels from the bottom
 
 
-    sprintf(hud_text, "%02d,%02d", player_x, player_y);
-    DrawText(hud_text, 0, 0, fontSize, WHITE);
+    //sprintf(hud_text, "%02d,%02d", player_x, player_y);
+    //DrawText(hud_text, 0, 0, fontSize, WHITE);
 
     // Draw key icon and text
     DrawTexture(textures['k'], startX, y, WHITE);

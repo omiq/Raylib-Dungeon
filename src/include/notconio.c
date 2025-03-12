@@ -132,7 +132,7 @@ void draw_screen(void) {
 
 void draw_momentary_object(unsigned int obj_old_x, unsigned int obj_old_y, 
                           unsigned int obj_x, unsigned int obj_y, 
-                          unsigned int obj_tile, unsigned int delay) {
+                          unsigned int obj_tile, int delay) {
     // Replace tile
     cputcxy(obj_old_x, obj_old_y, get_map(obj_old_x, obj_old_y));
 

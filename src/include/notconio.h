@@ -23,7 +23,7 @@ void output_message(void);
 void draw_screen(void);
 void draw_momentary_object(unsigned int obj_old_x, unsigned int obj_old_y, 
                           unsigned int obj_x, unsigned int obj_y, 
-                          unsigned int obj_tile, unsigned int delay);
+                          unsigned int obj_tile, int delay);
 //void draw_move(bool replace);
 
 

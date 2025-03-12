@@ -5,7 +5,7 @@
 #include <time.h>
 #include <raylib.h>
 
-unsigned int dumb_wait(unsigned int delay) {
+int dumb_wait(unsigned int delay) {
 
     WaitTime(delay/10000);
 
@@ -42,13 +42,13 @@ unsigned char get_key(void) {
         player_x++;
         return 'd';
     }
-    if ((IsKeyPressed(KEY_O) || IsKeyPressed(KEY_A)) && sword) {
-        draw_momentary_object(player_x-1, player_y, player_x-1, player_y, '-', 2000); 
+    if ((IsKeyPressed(KEY_O)) && sword) {
+        draw_momentary_object(player_x-1, player_y, player_x-1, player_y, '<', 150); 
         attack(10, player_x-1, player_y);
         return 'o';
     }
-    if ((IsKeyPressed(KEY_P) || IsKeyPressed(KEY_D)) && sword) {
-        draw_momentary_object(player_x+1, player_y, player_x+1, player_y, '-', 2000); 
+    if ((IsKeyPressed(KEY_P)) && sword) {
+        draw_momentary_object(player_x+1, player_y, player_x+1, player_y, '>', 150); 
         attack(10, player_x+1, player_y);
         return 'p';
     }
