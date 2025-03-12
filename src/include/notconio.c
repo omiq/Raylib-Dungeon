@@ -106,7 +106,7 @@ void draw_screen(void) {
     // Draw whole screen
     int row, col;
 
-    draw_move(false);
+//    draw_move(false);
 
     if (draw_whole_screen && screen_drawn == false) {
         for (row = 0; row < PLAYABLE_HEIGHT; row++) {
@@ -123,7 +123,8 @@ void draw_screen(void) {
         //printf("updating fov");
     }
 
-
+    cputcxy(old_x, old_y, ' ');
+    set_map(old_x, old_y, '.');
     cputcxy(player_x, player_y, '@');
         
 
@@ -139,12 +140,6 @@ void draw_momentary_object(unsigned int obj_old_x, unsigned int obj_old_y,
     cputcxy(obj_x, obj_y, (char)obj_tile);
 }
 
-void draw_move(bool replace) {
-    // Draw player
-    set_map(old_x, old_y,'.');
-    cputcxy(old_x, old_y, ' ');
-    
-}
 
 void update_fov(int player_x, int player_y, int radius) {
     for (int y = player_y - radius; y <= player_y + radius; y++) {

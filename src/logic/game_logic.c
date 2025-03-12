@@ -457,8 +457,10 @@ void game_loop(void) {
         if (obstruction) {
             player_x = old_x;
             player_y = old_y;
+
+
         } else {
-            draw_move(false);
+
             // Only move enemies if player successfully moved
             move_enemies();
             draw_screen();
