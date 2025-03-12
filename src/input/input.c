@@ -34,7 +34,7 @@ unsigned char get_key(void) {
         player_x--;
         return 'a';
     }
-    if (IsKeyPressed(KEY_S) && player_y < MAP_HEIGHT) {
+    if (IsKeyPressed(KEY_S) && player_y < MAP_HEIGHT-HUD_BOTTOM) {
         player_y++;
         return 's';
     }

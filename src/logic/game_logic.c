@@ -308,6 +308,10 @@ void move_enemies(void) {
 void game_loop(void) {
 
     key=0;
+    
+    // Backup the location
+    old_x = player_x;
+    old_y = player_y;
 
     // Get player input first
     key = get_key();
@@ -320,9 +324,6 @@ void game_loop(void) {
             direction_y = player_y - old_y;
         }
 
-        // Backup the location
-        old_x = player_x;
-        old_y = player_y;
 
         // Anything in our path?
         obstruction = false;
@@ -433,9 +434,6 @@ void game_loop(void) {
                 }
                 break;
 
-            case 0:
-            case 64: // Player
-                break;
             
             default:
                 if (c != ' ' && c != '.') {
@@ -463,12 +461,14 @@ void game_loop(void) {
 
             // Only move enemies if player successfully moved
             move_enemies();
-            draw_screen();
         }
 
         if (health < 1) {
             in_play = false;
         }
+
+//        draw_screen();
+
     }
 } 
 
