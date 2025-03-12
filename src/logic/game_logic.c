@@ -185,6 +185,7 @@ void attack(unsigned int weapon, unsigned int ax, unsigned int ay) {
     } else {
         sprintf(output, "miss! enemy health: %3d ", enemies[this_enemy].health);
         output_message();
+
         if ((player_x == ax && player_y == ay) || 
             (player_x == ax && (player_y == ay + 1 || player_y == ay - 1)) || 
             (player_y == ay && (player_x == ax + 1 || player_x == ax - 1))) {
@@ -196,7 +197,7 @@ void attack(unsigned int weapon, unsigned int ax, unsigned int ay) {
     if (enemies[this_enemy].health < 1) {
         // Success!
         sprintf(output, "enemy defeated!");
-        
+        output_message();
         
         // Draw tile in new location
         cputcxy(ax, ay, '.'); 
@@ -221,7 +222,7 @@ void enemy_attack(unsigned int this_enemy) {
             health -= enemies[this_enemy].strength;
         }    
         
-        sprintf(output, "ouch! health: %3d", health);
+        sprintf(output, "attacked! health: %3d", health);
         output_message();
         timer = dumb_wait(1000);
     } else {
@@ -294,26 +295,23 @@ void move_enemies(void) {
 
             // Redraw
             c = get_map(enemies[i].x, enemies[i].y);
+            
             if ((c != ' ' && c != '.') || c == enemies[i].tile) {
                 enemies[i].x = enemies[i].old_x;
                 enemies[i].y = enemies[i].old_y;
+                set_map(enemies[i].x, enemies[i].y, enemies[i].tile);
+
+                // Attack if adjacent to player
+                if (c=='@') enemy_attack(i);
+
             } else {
                 set_map(enemies[i].old_x, enemies[i].old_y, '.');
-                cputcxy(enemies[i].old_x, enemies[i].old_y, '.');
-            }
-
-            if (enemies[i].x != enemies[i].old_x || enemies[i].y != enemies[i].old_y) {
                 set_map(enemies[i].x, enemies[i].y, enemies[i].tile);
-                cputcxy(enemies[i].x, enemies[i].y, enemies[i].tile);
             }
 
-            if (
-                 get_map(enemies[i].x, enemies[i].y) == '@' || 
-                 get_map(enemies[i].x-1, enemies[i].y) == '@' ||
-                 get_map(enemies[i].x+1, enemies[i].y) == '@' ||
-                 get_map(enemies[i].x, enemies[i].y-1) == '@' ||
-                 get_map(enemies[i].x, enemies[i].y+1) == '@'
-            ) enemy_attack(i);
+
+            //cputcxy(enemies[i].x, enemies[i].y, enemies[i].tile);
+
 
         }
     }
@@ -327,7 +325,6 @@ void game_loop(void) {
     // Backup the location
     old_x = player_x;
     old_y = player_y;
-    set_map(old_x, old_y, '.');
 
 
     // Get player input first
@@ -411,7 +408,7 @@ void game_loop(void) {
                 break;
 
             case '$': // Cash money
-                score += 5;
+                score += 50;
                 sprintf(output, "ka-ching!");
                 break;
 
@@ -456,12 +453,9 @@ void game_loop(void) {
 
             
             default:
-                if (c != ' ' && c != '.') {
-                    // Figure out what the code is for tile
-                    gotoxy(0, 0);
-                    sprintf(output, "bumped into ...... %03d", c);
-                    obstruction = true;
-                }
+                set_map(old_x, old_y, '.');
+                set_map(player_x, player_y, '@');
+            
                 break;
         }
 
@@ -473,21 +467,26 @@ void game_loop(void) {
 
         // If obstructed then bounce
         if (obstruction) {
+
             player_x = old_x;
             player_y = old_y;
-
+            set_map(player_x, player_y, '@');
+            
 
         } else {
 
             // Only move enemies if player successfully moved
             move_enemies();
+
+            
+            
+
         }
 
         if (health < 1) {
             in_play = false;
         }
 
-        set_map(player_x, player_y, '@');
 
 //        draw_screen();
 
