@@ -70,7 +70,7 @@ void load_room(void) {
     placePlayer();
 
     // 1 Gobbo less than per room level
-    for (i = 0; i < room-1; i++) placeObject('g');
+    for (i = 0; i < 20+room-1; i++) placeObject('g');
     
     // 1 piece of idol per room level
     for (i = 0; i < room; i++) placeObject('i');
@@ -223,7 +223,7 @@ void enemy_attack(unsigned int this_enemy) {
         
         sprintf(output, "ouch! health: %3d", health);
         output_message();
-        
+        timer = dumb_wait(1000);
     } else {
         enemies[this_enemy].health -= 5;
         if (enemies[this_enemy].health < 1) {
@@ -240,7 +240,7 @@ void enemy_attack(unsigned int this_enemy) {
             output_message();
         }
         
-        
+        timer = dumb_wait(1000);
     }
 
     if (health < 1) {
@@ -248,7 +248,7 @@ void enemy_attack(unsigned int this_enemy) {
         sprintf(output, "enemy defeated you!");
         output_message();
         health = 0;
-        
+        timer = dumb_wait(1000);
     }
 }
 
@@ -258,6 +258,9 @@ bool is_within_range(int player_x, int player_y, int enemy_x, int enemy_y, int r
     int dy = enemy_y - player_y;
     return (dx * dx + dy * dy) <= (range * range);
 }
+
+
+
 
 // Move the enemies for a given room
 void move_enemies(void) {
@@ -304,6 +307,7 @@ void move_enemies(void) {
         }
     }
 }
+
 
 void game_loop(void) {
 

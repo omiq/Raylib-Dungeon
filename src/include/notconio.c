@@ -153,12 +153,13 @@ void update_fov(int player_x, int player_y, int radius) {
             // Check if coordinates are within map bounds
             if (y >= 0 && y < PLAYABLE_HEIGHT && x >= 0 && x < MAP_WIDTH) {
                 // Mark tile as visible
-                visibility_map[MAP_WIDTH * y + x] = true;
                 
                 // Draw the current FOV with full brightness
                 unsigned char tile = get_map(x, y);
                 if (tile != 0) {
                     cputcxy(x, y, tile);
+                    visibility_map[MAP_WIDTH * y + x] = true;
+
                 }
             }
         }
