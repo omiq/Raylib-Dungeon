@@ -112,6 +112,7 @@ void draw_screen(void) {
         for (row = 0; row < PLAYABLE_HEIGHT; row++) {
             for (col = 0; col < MAZE_WIDTH; col++) {
                 cputcxy(col, row, get_map(col, row));
+                visibility_map[MAP_WIDTH * row + col] = true;
             }
         }
         screen_drawn = true;
