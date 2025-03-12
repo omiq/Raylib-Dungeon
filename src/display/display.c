@@ -42,6 +42,8 @@ static void load_textures(void) {
         else if (i == 'r') GetResourcePath("r.png", filename, sizeof(filename));
         else if (i == 's') GetResourcePath("s.png", filename, sizeof(filename));
         else if (i == '.') GetResourcePath("..png", filename, sizeof(filename));
+        else if (i == 'O') GetResourcePath("O.png", filename, sizeof(filename));
+        
         else {
             // For other characters, use a default texture or skip
             continue;

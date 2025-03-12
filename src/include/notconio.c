@@ -130,14 +130,20 @@ void draw_screen(void) {
 
 }
 
-void draw_momentary_object(unsigned int obj_old_x, unsigned int obj_old_y,
-                          unsigned int obj_x, unsigned int obj_y,
+void draw_momentary_object(unsigned int obj_old_x, unsigned int obj_old_y, 
+                          unsigned int obj_x, unsigned int obj_y, 
                           unsigned int obj_tile, unsigned int delay) {
-    // Draw at new position
-    (void)obj_old_x;
-    (void)obj_old_y;
-    (void)delay;
-    cputcxy(obj_x, obj_y, (char)obj_tile);
+    // Replace tile
+    cputcxy(obj_old_x, obj_old_y, get_map(obj_old_x, obj_old_y));
+
+    // Draw tile in new location
+    cputcxy(obj_x, obj_y, obj_tile); 
+   
+    // Delay
+    timer = dumb_wait(delay*40);
+
+    // Replace tile again
+    cputcxy(obj_x, obj_y, get_map(obj_x, obj_y));
 }
 
 

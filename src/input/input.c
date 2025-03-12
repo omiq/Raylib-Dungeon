@@ -52,15 +52,16 @@ unsigned char get_key(void) {
         attack(10, player_x+1, player_y);
         return 'p';
     }
-    if (IsKeyPressed(KEY_F) && magic > 5) {
-        magic -= 5;
+    //&& magic > 5
+    if (IsKeyPressed(KEY_F) ) {
+        //magic -= 5;
         int fx = player_x + direction_x;
         int fy = player_y + direction_y;  
         char c = get_map(fx, fy);
         
         while ((c == ' ' || c == '.') && magic > 0) {             
-            draw_momentary_object(fx, fy, fx, fy, '*', 200); 
-            magic -= 1;
+            draw_momentary_object(fx, fy, fx, fy, 'O', 200); 
+            //magic -= 1;
             fx = fx + direction_x;
             fy = fy + direction_y;    
             c = get_map(fx, fy);

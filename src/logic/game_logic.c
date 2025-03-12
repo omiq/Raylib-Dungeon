@@ -308,21 +308,24 @@ void move_enemies(void) {
 void game_loop(void) {
 
     key=0;
-    
+
     // Backup the location
     old_x = player_x;
     old_y = player_y;
 
     // Get player input first
     key = get_key();
+
+    // Change direction
+    if (player_x != old_x || player_y != old_y) {
+        direction_x = player_x - old_x;
+        direction_y = player_y - old_y;
+        
+    }
+
     
     // Only process movement and enemies if player made a move
     if (key != 0) {
-        // Change direction
-        if (player_x != old_x || player_y != old_y) {
-            direction_x = player_x - old_x;
-            direction_y = player_y - old_y;
-        }
 
 
         // Anything in our path?
