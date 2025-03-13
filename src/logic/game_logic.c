@@ -467,13 +467,16 @@ void game_loop(void) {
 
         // If obstructed then bounce
         if (obstruction) {
-
+            
             player_x = old_x;
             player_y = old_y;
             set_map(player_x, player_y, '@');
             
 
         } else {
+
+            set_map(old_x, old_y, '.');
+            set_map(player_x, player_y, '@');
 
             // Only move enemies if player successfully moved
             move_enemies();
